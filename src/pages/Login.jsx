@@ -21,7 +21,7 @@ function Login() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/login",
+        "https://global-exim-backend.onrender.com/api/auth/login",
         {
           method: "POST",
           headers: {

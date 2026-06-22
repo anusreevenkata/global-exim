@@ -4,7 +4,7 @@ require("dotenv").config();
 
 const connectDB = require("./config/db");
 
-const inquiryRoutes = require("./routes/inquiryRoutes");
+const inquiryRoutes = require("./routes/InquiryRoutes");
 const authRoutes = require("./routes/authRoutes");
 
 // Connect MongoDB

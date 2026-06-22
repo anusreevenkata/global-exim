@@ -6,7 +6,7 @@ function Admin() {
   const [editMessage, setEditMessage] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/inquiries")
+    fetch("https://global-exim-backend.onrender.com/api/inquiries")
       .then((res) => res.json())
       .then((data) => setInquiries(data.data))
       .catch((err) => console.error(err));
@@ -17,7 +17,7 @@ function Admin() {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/inquiries/${id}`,
+        `https://global-exim-backend.onrender.com/api/inquiries/${id}`,
         {
           method: "DELETE",
         }

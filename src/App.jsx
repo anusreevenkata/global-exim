@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import Home from "./pages/Home";
 import About from "./pages/About";
@@ -10,6 +11,9 @@ import Products from "./pages/Products";
 import Services from "./pages/Services";
 import Contact from "./pages/Contact";
 import ExportMarkets from "./pages/ExportMarkets";
+import Admin from "./pages/Admin";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 import RedChilli from "./pages/products/RedChilli";
 import Turmeric from "./pages/products/Turmeric";
@@ -24,11 +28,32 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
+
         <Route path="/about" element={<About />} />
+
         <Route path="/products" element={<Products />} />
+
         <Route path="/services" element={<Services />} />
-        <Route path="/export-markets" element={<ExportMarkets />} />
+
+        <Route
+          path="/export-markets"
+          element={<ExportMarkets />}
+        />
+
         <Route path="/contact" element={<Contact />} />
+
+        <Route path="/login" element={<Login />} />
+
+        <Route path="/register" element={<Register />} />
+
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <Admin />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/products/red-chilli-powder"

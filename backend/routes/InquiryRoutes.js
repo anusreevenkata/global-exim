@@ -7,7 +7,7 @@ const {
   getInquiries,
   updateInquiry,
   deleteInquiry,
-} = require("../controllers/inquiryController");
+} = require("../controllers/InquiryController");
 
 router.post("/", createInquiry);
 

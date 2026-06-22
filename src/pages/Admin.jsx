@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 function Admin() {
   const [inquiries, setInquiries] = useState([]);
+  const [editingId, setEditingId] = useState(null);
+  const [editMessage, setEditMessage] = useState("");
 
   useEffect(() => {
     fetch("http://localhost:5000/api/inquiries")
@@ -11,11 +13,7 @@ function Admin() {
   }, []);
 
   const deleteInquiry = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this inquiry?"
-    );
-
-    if (!confirmDelete) return;
+    if (!window.confirm("Delete this inquiry?")) return;
 
     try {
       const response = await fetch(
@@ -31,12 +29,47 @@ function Admin() {
         setInquiries(
           inquiries.filter((item) => item._id !== id)
         );
-
-        alert("Inquiry Deleted Successfully");
       }
     } catch (error) {
       console.error(error);
-      alert("Delete Failed");
+    }
+  };
+
+  const startEdit = (item) => {
+    setEditingId(item._id);
+    setEditMessage(item.message);
+  };
+
+  const saveEdit = async (id) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/inquiries/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: editMessage,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        setInquiries(
+          inquiries.map((item) =>
+            item._id === id
+              ? { ...item, message: editMessage }
+              : item
+          )
+        );
+
+        setEditingId(null);
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -49,6 +82,7 @@ function Admin() {
         </h1>
 
         <div className="overflow-x-auto">
+
           <table className="w-full border">
 
             <thead className="bg-blue-600 text-white">
@@ -71,17 +105,51 @@ function Admin() {
 
                   <td className="p-3">{item.phone}</td>
 
-                  <td className="p-3">{item.message}</td>
-
                   <td className="p-3">
+                    {editingId === item._id ? (
+                      <input
+                        value={editMessage}
+                        onChange={(e) =>
+                          setEditMessage(e.target.value)
+                        }
+                        className="border p-2 w-full"
+                      />
+                    ) : (
+                      item.message
+                    )}
+                  </td>
+
+                  <td className="p-3 flex gap-2">
+
+                    {editingId === item._id ? (
+                      <button
+                        onClick={() =>
+                          saveEdit(item._id)
+                        }
+                        className="bg-green-500 text-white px-3 py-2 rounded"
+                      >
+                        Save
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() =>
+                          startEdit(item)
+                        }
+                        className="bg-yellow-500 text-white px-3 py-2 rounded"
+                      >
+                        Edit
+                      </button>
+                    )}
+
                     <button
                       onClick={() =>
                         deleteInquiry(item._id)
                       }
-                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                      className="bg-red-500 text-white px-3 py-2 rounded"
                     >
                       Delete
                     </button>
+
                   </td>
 
                 </tr>
@@ -89,6 +157,7 @@ function Admin() {
             </tbody>
 
           </table>
+
         </div>
 
       </div>

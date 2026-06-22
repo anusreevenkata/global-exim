@@ -35,6 +35,26 @@ const getInquiries = async (req, res) => {
   }
 };
 
+const updateInquiry = async (req, res) => {
+  try {
+    const inquiry = await Inquiry.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      data: inquiry,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 const deleteInquiry = async (req, res) => {
   try {
     await Inquiry.findByIdAndDelete(req.params.id);
@@ -54,5 +74,6 @@ const deleteInquiry = async (req, res) => {
 module.exports = {
   createInquiry,
   getInquiries,
+  updateInquiry,
   deleteInquiry,
 };

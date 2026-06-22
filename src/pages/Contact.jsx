@@ -1,40 +1,50 @@
 import { useRef, useState } from "react";
-import emailjs from "@emailjs/browser";
 
 function Contact() {
   const form = useRef();
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const sendEmail = (e) => {
-  e.preventDefault();
+  const sendEmail = async (e) => {
+    e.preventDefault();
 
-  setLoading(true);
+    setLoading(true);
+    setSuccess(false);
 
-  emailjs
-    .sendForm(
-      "service_oelsvmg",
-      "template_zy4kj7z",
-      form.current,
-      "o-ryk8CFNpLI0_8P4"
-    )
-    .then((result) => {
-      console.log("SUCCESS!", result.text);
+    try {
+      const formData = {
+        name: form.current.name.value,
+        email: form.current.email.value,
+        phone: form.current.phone.value,
+        message: form.current.message.value,
+      };
 
-      setSuccess(true);
-      setLoading(false);
-      form.current.reset();
-    })
-    .catch((error) => {
-      console.error("EMAILJS ERROR:", error);
-
-      alert(
-        `Failed to send inquiry.\n\nStatus: ${error.status}\nText: ${error.text}`
+      const response = await fetch(
+        "http://localhost:5000/api/inquiries",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
       );
 
-      setLoading(false);
-    });
-};
+      const data = await response.json();
+
+      if (data.success) {
+        setSuccess(true);
+        form.current.reset();
+      } else {
+        alert("Failed to save inquiry.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Server Error");
+    }
+
+    setLoading(false);
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 py-20 px-6">
@@ -54,8 +64,11 @@ function Contact() {
           </div>
         )}
 
-        <form ref={form} onSubmit={sendEmail} className="space-y-6">
-
+        <form
+          ref={form}
+          onSubmit={sendEmail}
+          className="space-y-6"
+        >
           <input
             type="text"
             name="name"
@@ -80,12 +93,6 @@ function Contact() {
             className="w-full border p-4 rounded-lg"
           />
 
-          <input
-            type="hidden"
-            name="title"
-            value="Website Inquiry"
-          />
-
           <textarea
             name="message"
             rows="6"
@@ -101,7 +108,6 @@ function Contact() {
           >
             {loading ? "Sending..." : "Send Inquiry"}
           </button>
-
         </form>
 
         <div className="mt-12 border-t pt-8">
